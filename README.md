@@ -56,3 +56,8 @@ In the final project, we used **clients data from a real company**, and had to c
 <img src="images/project3.PNG" alt="drawing" width="600" height="400"/>
 
 <br/>
+
+
+## References: 
+
+- [Udacity DSND Term 1](https://github.com/udacity/DSND_Term1)
