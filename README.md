@@ -21,7 +21,7 @@ In the final project, I used different machine learning models to predict if an 
 
 <br/>
 
-<img src="images/project1.PNG" alt="drawing" width="600" height="400"/>
+<img src="images/project1.PNG" alt="drawing" width="700" height="500"/>
 
 <br/>
 
@@ -37,7 +37,7 @@ In the final project, we had to create an image classifier that was able to clas
 
 <br/>
 
-<img src="images/project2.PNG" alt="drawing" width="600" height="400"/>
+<img src="images/project2.PNG" alt="drawing" width="700" height="500"/>
 
 <br/>
 
@@ -53,7 +53,7 @@ In the final project, we used **clients data from a real company**, and had to c
 
 <br/>
 
-<img src="images/project3.PNG" alt="drawing" width="600" height="400"/>
+<img src="images/project3.PNG" alt="drawing" width="700" height="500"/>
 
 <br/>
 
