@@ -4,9 +4,9 @@ Projects made in the Uacity Data Science Nanodegree Program. IN PROGRESS.
 
 The Udacity DataScience Nanodegree is an online program designed to teach students the tools needed to be a data scientist: data cleaning and engineering, data visualization, data mining, machine learning, deep learning, etc. The program is available here : https://www.udacity.com/course/data-scientist-nanodegree--nd025. 
 
-The programming language used throughout the course is **Python** . 
+The programming language used throughout the nanodegree is **Python** . 
 
-The nanodegree is divided in different parts. In each part, there are lessons and a project in which the student uses what was learned to solve a real-world problem.  
+The nanodegree is divided in different parts. In each part, there are explanatory lessons, and a project in which the students use what was learned to solve a real-world problem.  
 
 The nanodegree sections are:
 
