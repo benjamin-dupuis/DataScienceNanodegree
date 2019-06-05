@@ -3,6 +3,8 @@
 This project used the data collected from the 2018 Kickstarter projects. The dataset is available here: 
 [Kaggle](https://www.kaggle.com/kemical/kickstarter-projects)
 
+I did an Medium article describing my data analysis. This article is available [here](https://medium.com/@benjamindupuis/this-is-what-it-takes-to-have-a-successful-kickstarter-project-5806d28b6fab).
+
 
 
 ## Dependencies
