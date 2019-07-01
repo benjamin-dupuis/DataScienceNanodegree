@@ -47,7 +47,6 @@ def index():
     categories_counts_df = pd.DataFrame({'category': categories_counts_series.index, 'count': categories_counts_series.values}) 
     
     # create visuals
-    # TODO: Below is an example - modify to create your own visuals
     graphs = [
         {
             'data': [
