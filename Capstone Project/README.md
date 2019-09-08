@@ -1,17 +1,6 @@
-# Disaster Response Pipeline Project
+# Starbucks Capstone Project
 
-This project uses machine learning to classify messages received from a natural disastter. The model was trained on more than 25,000 real messages that were sent during disaters. That data comes from [FigureEight](https://www.figure-eight.com/).
-
-Then, the goal was to create a Dashboard using [Flask](http://flask.pocoo.org/) and [Plotly](https://plot.ly/) to display the predicted categories of an input message. 
-
-
-![master](images/master_img.PNG)
-
-
-Here is an example, where the input message is "I need water! Please help!" : 
-
-
-![response](images/response_img.PNG)
+This project uses machine learning to predict if a Stabucks customer will respond postively to an marketing offer.
 
 
 ### Installation
@@ -24,8 +13,7 @@ git clone https://github.com/benjamin-dupuis/DataScienceNanodegree.git
 Move into the Disaster Response project folder:
 
 ```
-cd DataEngineering
-cd Disaster Response Project
+cd Capstone Project
 ```
 
 Create a virtual environment and activate it. For infos, click [here](https://uoa-eresearch.github.io/eresearch-cookbook/recipe/2014/11/26/python-virtual-env/).
@@ -40,10 +28,10 @@ pip install -r requirements.txt
 ### Usage:
 1. Run the following commands in the project's root directory to set up your database and model.
 
-    - To run ETL pipeline that cleans data and stores in database
-        `python data/process_data.py data/disaster_messages.csv data/disaster_categories.csv data/DisasterResponse.db`
-    - To run ML pipeline that trains classifier and saves
-        `python models/train_classifier.py data/DisasterResponse.db models/classifier.pkl`
+    - To run ETL pipeline that cleans data and saves the data in a CSV file:
+        `python data/process_data.py`
+    - To run ML pipeline that trains classifier and saves it:
+        `python models/train_classifier.py data/cleaned_data.csv models/classifier.pkl`
 
 2. Move into the app folder and run the application:
     ```
@@ -56,6 +44,5 @@ pip install -r requirements.txt
 
 ### Machine Learning
 
-The model that was selected was AdaboostClassifier. The average precision of the model over all message categories was **90%**.
-The model was fine-tuned using [scikit-learn GridSearch](https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.GridSearchCV.html). Also, a ML pipeline was employed using [scikit-learn Pipeline](https://scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html).
-
+The model that was selected was GradientBoostingClassifier. The model was able to predict whether or not an offer was going to be successful with an accuracy of **75%**.
+The model was fine-tuned using [scikit-learn GridSearch](https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.GridSearchCV.html). 
