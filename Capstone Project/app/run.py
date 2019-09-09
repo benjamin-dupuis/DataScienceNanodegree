@@ -151,7 +151,7 @@ def index():
                     'title': "% of success"
                 },
                 'xaxis': {
-                    'title': "Income"
+                    'title': "Income (in thousands USD)"
                 }
             }
         },
@@ -163,6 +163,13 @@ def index():
 
     # render web page with plotly graphs
     return render_template('master.html', ids=ids, graphJSON=graph_json)
+
+
+@app.route('/machine-learning/')
+def machine_learning():
+    """Machine learning page."""
+    return render_template('machine-learning.html')
+
 
 
 #
