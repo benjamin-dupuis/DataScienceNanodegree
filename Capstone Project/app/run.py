@@ -1,38 +1,36 @@
 import json
-import plotly
-import pandas as pd
 
+import pandas as pd
+import plotly
 from flask import Flask
-from flask import render_template, request, jsonify
+from flask import render_template
 from plotly.graph_objs import Bar
 from sklearn.externals import joblib
 
-
 app = Flask(__name__)
-
 
 # Load data
 df = pd.read_csv('../data/data_for_analysis.csv')
 
 # load model
-model = joblib.load("../models/model.pkl")
+model = joblib.load("../models/classifier.pkl")
 
 
 def age_interval(age):
     """Put age into an interval."""
     if age < 10:
         interval = '[0, 10['
-    elif age >=10 and age < 20:
+    elif 10 <= age < 20:
         interval = '[10, 20['
-    elif age >=20 and age < 30:
+    elif 20 <= age < 30:
         interval = '[20, 30['
-    elif age >=30 and age < 40:
+    elif 30 <= age < 40:
         interval = '[30, 40['
-    elif age >=40 and age < 50:
+    elif 40 <= age < 50:
         interval = '[40, 50['
-    elif age >=50 and age < 60:
+    elif 50 <= age < 60:
         interval = '[50, 60['
-    elif age >=60 and age < 70:
+    elif 60 <= age < 70:
         interval = '[60, 70['
     elif age >= 70:
         interval = '[70+, ]'
@@ -41,23 +39,22 @@ def age_interval(age):
     return interval
 
 
-
 def income_interval(income):
     """Put income into an interval."""
     income = income / 1000
-    if income >= 30 and income < 40:
+    if 30 <= income < 40:
         interval = '[30, 40['
-    elif income >= 40 and income < 50:
+    elif 40 <= income < 50:
         interval = '[40, 50['
-    elif income >= 50 and income < 60:
+    elif 50 <= income < 60:
         interval = '[50, 60['
-    elif income >= 60 and income < 70:
+    elif 60 <= income < 70:
         interval = '[60, 70['
-    elif income >= 70 and income < 80:
+    elif 70 <= income < 80:
         interval = '[70, 80['
-    elif income >= 80 and income < 90:
+    elif 80 <= income < 90:
         interval = '[80, 90['
-    elif income >= 90 and income < 100:
+    elif 90 <= income < 100:
         interval = '[90, 100['
     elif income >= 100:
         interval = '[100+, ]'
@@ -70,7 +67,6 @@ def income_interval(income):
 @app.route('/')
 @app.route('/index')
 def index():
-
     offer_types = df.groupby('offer_type')['successful_offer'].mean()
     offer_types_df = pd.DataFrame({'offer_type': offer_types.index, '% of success': offer_types.values})
 
@@ -84,14 +80,7 @@ def index():
     df['income_interval'] = df['income'].apply(income_interval)
     incomes = df.groupby('income_interval')['successful_offer'].mean()
     incomes_df = pd.DataFrame({'income': incomes.index, '% of success': incomes.values})
-    
-    # extract data needed for visuals
-    # genre_counts = df.groupby('genre').count()['message']
-    # genre_names = list(genre_counts.index)
-    #
-    # categories_counts_series = df[df.columns[4:]].apply(lambda col: col.sum())
-    # categories_counts_df = pd.DataFrame({'category': categories_counts_series.index, 'count': categories_counts_series.values})
-    
+
     # create visuals
     graphs = [
         {
@@ -167,13 +156,14 @@ def index():
             }
         },
     ]
-    
+
     # encode plotly graphs in JSON
     ids = ["graph-{}".format(i) for i, _ in enumerate(graphs)]
     graph_json = json.dumps(graphs, cls=plotly.utils.PlotlyJSONEncoder)
-    
+
     # render web page with plotly graphs
     return render_template('master.html', ids=ids, graphJSON=graph_json)
+
 
 #
 # # web page that handles user query and displays model results
