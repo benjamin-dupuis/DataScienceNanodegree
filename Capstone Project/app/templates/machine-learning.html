@@ -1,5 +1,38 @@
 {% extends "master.html" %}
 
+
 {% block content %}
-Machine learning !!!
+<div class="row">
+    <div class="col-md-6 form-group-lg">
+        <form method="post">
+            {% from "_formhelpers.html" import render_field %}
+            <div>
+                <label> User ID : </label>
+                {{ render_field(form.user_id, class="form-control") }}
+            </div>
+            <br/>
+            <div>
+                <label> Offer ID : </label>
+                {{ render_field(form.offer_id, class="form-control") }}
+            </div>
+            <br/>
+            <div class="col-lg-offset-5">
+                <button type="submit" class="btn btn-primary mb-2">Predict</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="col-md-6">
+        {% if data %}
+            <!--{{ data.get('Offer ID') }}-->
+            <!--{{ data.get('User ID') }}-->
+        {{ data }}
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}
+
+
+{% block scripts %}
 {% endblock %}

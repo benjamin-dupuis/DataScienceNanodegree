@@ -70,12 +70,8 @@ def engineer_transcript(transcript, profile):
     return transcript
 
 
-def get_complete_dataframe(portfolio, profile, transcript):
-    """Get complete DataFrame from initial three DataFrames."""
-    engineered_portfolio = engineer_portfolio(portfolio)
-    engineered_profile = engineer_profile(profile)
-    engineered_transcript = engineer_transcript(transcript, profile)
-
+def get_complete_dataframe(engineered_portfolio, engineered_profile, engineered_transcript):
+    """Get complete DataFrame from engineered three DataFrames."""
     merged_transcript = engineered_transcript.merge(engineered_profile,
                                                     left_on='person',
                                                     right_on='id',
@@ -133,10 +129,10 @@ def fill_successful_offers(df):
 
 
 def get_dataframe_for_analysis(df, portfolio):
-    df_for_analysis = df.drop(['id', 'value', 'time', 'event'], axis=1) \
+    df_for_analysis = df.drop(['value', 'time', 'event'], axis=1) \
         .dropna(axis=0) \
         .drop_duplicates(keep='first') \
-        .merge(portfolio, left_on='offer_id', right_on='id', how='inner') \
+        .merge(portfolio, on='offer_id', how='inner') \
         .drop(['difficulty_x', 'reward_x'], axis=1) \
         .rename(columns={'difficulty_y': 'difficulty', 'reward_y': 'reward'})
     return df_for_analysis
@@ -159,16 +155,28 @@ def main():
     """Main function to load, engineer DataFrames, and save the cleaned DataFrames in CSV format."""
     print("Loading data...")
     portfolio, profile, transcript = load_data()
+    portfolio_tmp = portfolio.copy()
 
     print("Engineering DataFrames...")
-    complete_df = get_complete_dataframe(portfolio=portfolio, profile=profile, transcript=transcript)
+    engineered_portfolio = engineer_portfolio(portfolio)
+    engineered_profile = engineer_profile(profile)
+    engineered_transcript = engineer_transcript(transcript, profile)
+    complete_df = get_complete_dataframe(engineered_portfolio=engineered_portfolio,
+                                         engineered_profile=engineered_profile,
+                                         engineered_transcript=engineered_transcript)
     success_df = fill_successful_offers(df=complete_df)
-    df_for_analysis = get_dataframe_for_analysis(df=success_df, portfolio=portfolio)
+    portfolio_tmp = portfolio_tmp.rename(columns={'id': 'offer_id'})
+    df_for_analysis = get_dataframe_for_analysis(df=success_df, portfolio=portfolio_tmp)
+    # Test that the DataFrame for analysis has the correct set of values for offers IDs and user IDs
+    assert not (set(df_for_analysis['id']) - set(transcript['person']))
+    assert not (set(df_for_analysis['offer_id']) - set(portfolio['id']))
     df_for_machine_learning = engineer_final_df(df=success_df)
 
-    print("Saving DataFrames...")
+    print("Saving DataFrames to CSV...")
     save_dataframe_to_csv(df_for_machine_learning, 'cleaned_data.csv')
     save_dataframe_to_csv(df_for_analysis, 'data_for_analysis.csv')
+    save_dataframe_to_csv(engineered_portfolio, 'engineered_portfolio.csv')
+    save_dataframe_to_csv(engineered_profile, 'engineered_profile.csv')
 
     print("DataFrames successfully saved!")
 

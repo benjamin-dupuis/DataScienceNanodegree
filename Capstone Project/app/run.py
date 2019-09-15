@@ -2,18 +2,55 @@ import json
 
 import pandas as pd
 import plotly
-from flask import Flask
-from flask import render_template
+from flask import Flask, render_template, request, redirect, url_for, jsonify
 from plotly.graph_objs import Bar
-from sklearn.externals import joblib
+from flask_wtf import FlaskForm
+import numpy as np
+from wtforms.fields import SelectField
+import pickle
 
 app = Flask(__name__)
 
+
+def load_model(model_filepath):
+    """Load trained machine learning model."""
+    with open(model_filepath, 'rb') as pickle_model:
+        ml_model = pickle.load(pickle_model)
+    pickle_model.close()
+    return ml_model
+
+
+# Load model
+model = load_model('../models/classifier.pkl')
+
 # Load data
 df = pd.read_csv('../data/data_for_analysis.csv')
+portfolio = pd.read_csv('../data/engineered_portfolio.csv')
+profile = pd.read_csv('../data/engineered_profile.csv')
+app.config['SECRET_KEY'] = 'secret'
 
-# load model
-model = joblib.load("../models/classifier.pkl")
+
+def get_offer_and_user_attributes(portfolio_engineered, profile_engineered, offer_id, user_id):
+    """Get the offer and user attributes from DataFrames."""
+    assert offer_id in list(portfolio_engineered['offer_id']), f"Offer ID {offer_id} not found in portfolio DataFrame."
+    assert user_id in list(profile_engineered['id']), f"User ID {user_id} not found in profile DataFrame."
+
+    offer_values = list(
+        portfolio_engineered[portfolio_engineered['offer_id'] == offer_id].drop('offer_id', axis=1).values[0])
+    user_values = list(profile_engineered[profile_engineered['id'] == user_id].drop('id', axis=1).values[0])
+
+    return np.array(user_values + offer_values)
+
+
+def predict(ml_model, values):
+    """
+    User machine learning model to make a prediction for given values.
+    :param ml_model: Machine learning model.
+    :param values: List of values.
+    :return: The prediction (int).
+    """
+    prediction = ml_model.predict(values.reshape(-1, 1).T)
+    return prediction[0]
 
 
 def age_interval(age):
@@ -81,7 +118,6 @@ def index():
     incomes = df.groupby('income_interval')['successful_offer'].mean()
     incomes_df = pd.DataFrame({'income': incomes.index, '% of success': incomes.values})
 
-    # create visuals
     graphs = [
         {
             'data': [
@@ -165,31 +201,31 @@ def index():
     return render_template('master.html', ids=ids, graphJSON=graph_json)
 
 
-@app.route('/machine-learning/')
+class ChoiceForm(FlaskForm):
+    user_ids = list(df['id'].unique())
+    offer_ids = list(df['offer_id'].unique())
+    user_id = SelectField('User ID', choices=list(zip(user_ids, user_ids)))
+    offer_id = SelectField('Offer ID', choices=list(zip(offer_ids, offer_ids)))
+
+
+@app.route('/machine-learning',  methods=['GET', 'POST'])
 def machine_learning():
     """Machine learning page."""
-    return render_template('machine-learning.html')
+    form = ChoiceForm()
 
-
-
-#
-# # web page that handles user query and displays model results
-# @app.route('/go')
-# def go():
-#     # save user input in query
-#     query = request.args.get('query', '')
-#
-#     # use model to predict classification for query
-#     classification_labels = model.predict([query])[0]
-#     classification_results = dict(zip(df.columns[4:], classification_labels))
-#
-#     # This will render the go.html Please see that file.
-#     return render_template(
-#         'go.html',
-#         query=query,
-#         classification_result=classification_results
-#     )
-
+    if request.method == 'POST':
+        user_id_value = form.user_id.data
+        offer_id_value = form.offer_id.data
+        attributes = get_offer_and_user_attributes(portfolio_engineered=portfolio,
+                                                   profile_engineered=profile,
+                                                   user_id=user_id_value,
+                                                   offer_id=offer_id_value)
+        prediction = predict(ml_model=model, values=attributes)
+        #data = {'Offer ID': offer_id_value, 'User ID': user_id_value}
+        data = {'Prediction': prediction}
+        return render_template('machine-learning.html', data=data, form=form)
+    data = {}
+    return render_template('machine-learning.html', data=data, form=form)
 
 def main():
     app.run(host='0.0.0.0', port=3001, debug=True)
