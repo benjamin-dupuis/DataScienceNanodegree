@@ -1,18 +1,17 @@
 import json
-import plotly
-import pandas as pd
 
+import pandas as pd
+import plotly
+from flask import Flask
+from flask import render_template, request
 from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
-
-from flask import Flask
-from flask import render_template, request, jsonify
 from plotly.graph_objs import Bar
 from sklearn.externals import joblib
 from sqlalchemy import create_engine
 
-
 app = Flask(__name__)
+
 
 def tokenize(text):
     tokens = word_tokenize(text)
@@ -24,6 +23,7 @@ def tokenize(text):
         clean_tokens.append(clean_tok)
 
     return clean_tokens
+
 
 # load data
 engine = create_engine('sqlite:///../data/DisasterResponse.db')
@@ -44,7 +44,8 @@ def index():
     genre_names = list(genre_counts.index)
 
     categories_counts_series = df[df.columns[4:]].apply(lambda col: col.sum())
-    categories_counts_df = pd.DataFrame({'category': categories_counts_series.index, 'count': categories_counts_series.values}) 
+    categories_counts_df = pd.DataFrame({'category': categories_counts_series.index,
+                                         'count': categories_counts_series.values})
     
     # create visuals
     graphs = [
@@ -88,10 +89,10 @@ def index():
     
     # encode plotly graphs in JSON
     ids = ["graph-{}".format(i) for i, _ in enumerate(graphs)]
-    graphJSON = json.dumps(graphs, cls=plotly.utils.PlotlyJSONEncoder)
+    graph_json = json.dumps(graphs, cls=plotly.utils.PlotlyJSONEncoder)
     
     # render web page with plotly graphs
-    return render_template('master.html', ids=ids, graphJSON=graphJSON)
+    return render_template('master.html', ids=ids, graphJSON=graph_json)
 
 
 # web page that handles user query and displays model results
