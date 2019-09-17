@@ -4,7 +4,7 @@
 {% block content %}
 <div class="row">
     <div class="col-md-6 form-group-lg">
-        <form method="post">
+        <form>
             {% from "_formhelpers.html" import render_field %}
             <div>
                 <label> User ID : </label>
@@ -91,7 +91,7 @@
             </div>
             <br/>
             <div class="col-lg-12">
-                <button type="submit" class="btn btn-primary btn-lg btn-block" style="background: #006341;">Predict</button>
+                <span class="btn btn-primary btn-lg btn-block" onclick="predict()" style="background: #006341;">Predict</span>
             </div>
             <br/>
         </form>
@@ -99,13 +99,7 @@
 
     <div class="col-md-6" style="text-align: center; margin-top: 5rem;">
         <h2>Should we send the offer to that user ?</h2>
-        {% if data.get('Prediction') is not none %}
-            {% if data.get('Prediction') == 1 %}
-                <h3 style="color: green">Yes !</h3>
-            {% elif data.get('Prediction') == 0 %}
-               <h3 style="color: red">No.</h3>
-            {% endif %}
-        {% endif %}
+        <span id="prediction-item"></span>
     </div>
 </div>
 
@@ -121,7 +115,7 @@
         var became_member_item = document.getElementById("became-member-item");
 
         user_id_select.onchange = function()  {
-            user_id = user_id_select.value;
+            var user_id = user_id_select.value;
 
             fetch('/update/' + user_id).then(function(response) {
                 response.json().then(function(data) {
@@ -179,7 +173,7 @@
         var offer_type_item = document.getElementById("offer-type-item");
 
         offer_id_select.onchange = function()  {
-            offer_id = offer_id_select.value;
+            var offer_id = offer_id_select.value;
 
             fetch('/update-offer/' + offer_id).then(function(response) {
                 response.json().then(function(data) {
@@ -221,6 +215,29 @@
             });
         };
 
+        function predict(){
+            var user_id = user_id_select.value;
+            var offer_id = offer_id_select.value;
+            var prediction_item = document.getElementById("prediction-item");
+
+            fetch('/predict/' + offer_id + '/' + user_id).then(function(response) {
+                response.json().then(function(data) {
+                    var prediction = data.prediction;
+
+                    if (prediction === 1){
+                        var prediction_value = '<h3 style="color: green">Yes!</h3>'
+                    }
+                    else if (prediction === 0) {
+                        var prediction_value = '<h3 style="color: red">No.</h3>'
+                    };
+
+                    prediction_item.innerHTML = prediction_value;
+
+                });
+
+            });
+
+        };
 
     </script>
 {% endblock %}

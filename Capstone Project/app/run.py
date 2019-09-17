@@ -238,23 +238,10 @@ class ChoiceForm(FlaskForm):
     offer_id = SelectField('Offer ID', choices=list(zip(offer_ids, offer_ids)))
 
 
-@app.route('/machine-learning', methods=['GET', 'POST'])
+@app.route('/machine-learning')
 def machine_learning():
     """Machine learning page."""
     form = ChoiceForm()
-    if request.method == 'POST':
-        user_id_value = form.user_id.data
-        offer_id_value = form.offer_id.data
-        offer_values_dict, user_values_dict = get_offer_and_user_attributes(portfolio_engineered=portfolio,
-                                                                            profile_engineered=profile,
-                                                                            user_id=user_id_value,
-                                                                            offer_id=offer_id_value)
-        data = {'user_info': user_values_dict, 'offer_info': offer_values_dict}
-        attributes = np.array(list(user_values_dict.values()) + list(offer_values_dict.values()))
-        prediction = predict(ml_model=model, values=attributes)
-        data.update({'Prediction': prediction})
-        return render_template('machine-learning.html', data=data, form=form)
-
     user_id_value = form.user_id.choices[0][0]
     offer_id_value = form.offer_id.choices[0][0]
     offer_values_dict, user_values_dict = get_offer_and_user_attributes(portfolio_engineered=portfolio,
@@ -295,6 +282,19 @@ def update_offer(offer_id):
                                                          offer_id=offer_id)
 
     data = {'offer_info': convert_values_to_string(offer_values_dict)}
+    return jsonify(data)
+
+
+@app.route('/predict/<offer_id>/<user_id>')
+def make_prediction(offer_id, user_id):
+    """Make a prediction for the given offer ID and user ID."""
+    offer_values_dict, user_values_dict = get_offer_and_user_attributes(portfolio_engineered=portfolio,
+                                                                        profile_engineered=profile,
+                                                                        user_id=user_id,
+                                                                        offer_id=offer_id)
+    attributes = np.array(list(user_values_dict.values()) + list(offer_values_dict.values()))
+    prediction = int(predict(ml_model=model, values=attributes))
+    data = {'prediction': prediction}
     return jsonify(data)
 
 
