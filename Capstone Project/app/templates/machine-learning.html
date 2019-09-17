@@ -9,6 +9,45 @@
             <div>
                 <label> User ID : </label>
                 {{ render_field(form.user_id, class="form-control") }}
+                <br/>
+                <div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            Age:
+                            <span id="age-item">{{ data.get('user_info').get('age') }} </span>
+                        </li>
+                        <li class="list-group-item">
+                            Income:
+                            <span id="income-item">{{ data.get('user_info').get('income') }}</span>
+                            $
+                        </li>
+                        <li class="list-group-item" >
+                            Gender:
+                            <span id="gender-item">
+                                {% if  data.get('user_info').get('gender_M') == 1.0 %}
+                                Male
+                                {% elif  data.get('user_info').get('gender_F') == 1.0 %}
+                                Female
+                                {% else %}
+                                Other
+                                {% endif %}
+                             </span>
+                        </li>
+                        <li class="list-group-item">
+                            Became member on:
+                            <span id="became-member-item">
+                            {% for key, value in data.get('user_info').items() %}
+                                {% if key.startswith('became') %}
+                                    {% if value == 1.0 %}
+                                        {{ key.split('_')[-1] }}
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+                            </span>
+                        </li>
+
+                    </ul>
+                </div>
             </div>
             <br/>
             <div>
@@ -16,17 +55,54 @@
                 {{ render_field(form.offer_id, class="form-control") }}
             </div>
             <br/>
-            <div class="col-lg-offset-5">
-                <button type="submit" class="btn btn-primary mb-2">Predict</button>
+            <div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item" >
+                            Difficulty:
+                            <span id="difficulty-item">
+                            {{ data.get('offer_info').get('difficulty') }}
+                            </span>
+                        </li>
+                        <li class="list-group-item">
+                            Reward:
+                            <span id="reward-item">
+                            {{ data.get('offer_info').get('reward') }}
+                            </span>
+                        </li>
+                        <li class="list-group-item">
+                            Duration in hours:
+                            <span id="duration-item">
+                            {{ data.get('offer_info').get('duration_hours') }}
+                            </span>
+                        </li>
+                        <li class="list-group-item">
+                            Offer type:
+                            <span id="offer-type-item">
+                            {% for key, value in data.get('offer_info').items() %}
+                                {% if key.startswith('offer_type') %}
+                                    {% if value == 1.0 %}
+                                        {{ key.split('_')[-1] }}
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+                            </span>
+                        </li>
+                    </ul>
+            </div>
+            <div class="col-lg-5">
+                <button type="submit" class="btn btn-primary mb-2" style="background: #006341;">Predict</button>
             </div>
         </form>
     </div>
 
-    <div class="col-md-6">
-        {% if data %}
-            <!--{{ data.get('Offer ID') }}-->
-            <!--{{ data.get('User ID') }}-->
-        {{ data }}
+    <div class="col-md-6" style="text-align: center; margin-top: 5rem;">
+        <h2>Should we send the offer to that user ?</h2>
+        {% if data.get('Prediction') is not none %}
+            {% if data.get('Prediction') == 1 %}
+                <h3 style="color: green">Yes !</h3>
+            {% elif data.get('Prediction') == 0 %}
+               <h3 style="color: red">No.</h3>
+            {% endif %}
         {% endif %}
     </div>
 </div>
@@ -35,4 +111,114 @@
 
 
 {% block scripts %}
+    <script>
+        var user_id_select = document.getElementById("user_id");
+        var age_item = document.getElementById("age-item");
+        var income_item = document.getElementById("income-item");
+        var gender_item = document.getElementById("gender-item");
+        var became_member_item = document.getElementById("became-member-item");
+
+        user_id_select.onchange = function()  {
+            user_id = user_id_select.value;
+
+            fetch('/update/' + user_id).then(function(response) {
+                response.json().then(function(data) {
+
+                    // Update age.
+                    age = data.user_info.age
+                    var optionHTML = '';
+                    optionHTML += age;
+                    age_item.innerHTML = optionHTML;
+
+                    // Update income.
+                    income = data.user_info.income;
+                    var optionHTML = '';
+                    optionHTML += income;
+                    income_item.innerHTML = optionHTML;
+
+                    // Update gender.
+                    var optionHTML = '';
+                    if (data.user_info.gender_M == 1.0){
+                        var gender = 'Male'
+                    }
+                    else if (data.user_info.gender_F == 1.0){
+                        var gender = 'Female'
+                    }
+                    else {
+                        var gender = 'Other'
+                    }
+                    optionHTML += gender;
+                    gender_item.innerHTML = optionHTML;
+
+                    // Update became member on.
+                    var optionHTML = '';
+                    var resultValue;
+                    for (var key in data.user_info){
+                        value = data.user_info[key];
+                        if (key.startsWith('became')){
+                            if (value == 1.0) {
+                                var resultValue = String(key).split("_").slice(-1)[0];
+                            }
+                        }
+                    };
+                    optionHTML += resultValue;
+                    became_member_item.innerHTML = optionHTML;
+
+                });
+
+            });
+        };
+
+
+        var offer_id_select = document.getElementById("offer_id");
+        var difficulty_item = document.getElementById("difficulty-item");
+        var reward_item = document.getElementById("reward-item");
+        var duration_item = document.getElementById("duration-item");
+        var offer_type_item = document.getElementById("offer-type-item");
+
+        offer_id_select.onchange = function()  {
+            offer_id = offer_id_select.value;
+
+            fetch('/update-offer/' + offer_id).then(function(response) {
+                response.json().then(function(data) {
+
+                    // Update difficulty.
+                    difficulty = data.offer_info.difficulty
+                    var optionHTML = '';
+                    optionHTML += difficulty;
+                    difficulty_item.innerHTML = optionHTML;
+
+                    // Update reward.
+                    reward = data.offer_info.reward
+                    var optionHTML = '';
+                    optionHTML += reward;
+                    reward_item.innerHTML = optionHTML;
+
+                    // Update duration.
+                    duration = data.offer_info.duration_hours
+                    var optionHTML = '';
+                    optionHTML += duration;
+                    duration_item.innerHTML = optionHTML;
+
+                    // Update offer type.
+                    var optionHTML = '';
+                    var resultValue;
+                    for (var key in data.offer_info){
+                        value = data.offer_info[key];
+                        if (key.startsWith('offer_type')){
+                            if (value == 1.0) {
+                                var resultValue = String(key).split("_").slice(-1)[0];
+                            }
+                        }
+                    };
+                    optionHTML += resultValue;
+                    offer_type_item.innerHTML = optionHTML;
+
+                });
+
+            });
+        };
+
+
+    </script>
 {% endblock %}

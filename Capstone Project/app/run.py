@@ -1,13 +1,13 @@
 import json
+import pickle
 
+import numpy as np
 import pandas as pd
 import plotly
-from flask import Flask, render_template, request, redirect, url_for, jsonify
-from plotly.graph_objs import Bar
+from flask import Flask, render_template, request, jsonify
 from flask_wtf import FlaskForm
-import numpy as np
+from plotly.graph_objs import Bar, Pie
 from wtforms.fields import SelectField
-import pickle
 
 app = Flask(__name__)
 
@@ -35,11 +35,12 @@ def get_offer_and_user_attributes(portfolio_engineered, profile_engineered, offe
     assert offer_id in list(portfolio_engineered['offer_id']), f"Offer ID {offer_id} not found in portfolio DataFrame."
     assert user_id in list(profile_engineered['id']), f"User ID {user_id} not found in profile DataFrame."
 
-    offer_values = list(
-        portfolio_engineered[portfolio_engineered['offer_id'] == offer_id].drop('offer_id', axis=1).values[0])
-    user_values = list(profile_engineered[profile_engineered['id'] == user_id].drop('id', axis=1).values[0])
+    offer_values_dict = portfolio_engineered[portfolio_engineered['offer_id'] == offer_id].drop('offer_id',
+                                                                                                axis=1).to_dict(
+        'records')[0]
+    user_values_dict = profile_engineered[profile_engineered['id'] == user_id].drop('id', axis=1).to_dict('records')[0]
 
-    return np.array(user_values + offer_values)
+    return offer_values_dict, user_values_dict
 
 
 def predict(ml_model, values):
@@ -100,19 +101,20 @@ def income_interval(income):
     return interval
 
 
-# index webpage displays cool visuals and receives user input text for model
+# Index webpage displays cool visuals and receives user input text for model.
 @app.route('/')
 @app.route('/index')
 def index():
+    labels = ['Successul', 'Not-successful']
+    success = np.mean(df['successful_offer'])
+    values = [success, 1 - success]
+
     offer_types = df.groupby('offer_type')['successful_offer'].mean()
     offer_types_df = pd.DataFrame({'offer_type': offer_types.index, '% of success': offer_types.values})
 
     df['age_interval'] = df['age'].apply(age_interval)
     grouped_ages = df.groupby('age_interval')['successful_offer'].mean()
     grouped_ages_df = pd.DataFrame({'age': grouped_ages.index, '% of success': grouped_ages.values})
-
-    difficulties = df.groupby('difficulty')['successful_offer'].mean()
-    difficulties_df = pd.DataFrame({'difficulty': difficulties.index, '% of success': difficulties.values})
 
     df['income_interval'] = df['income'].apply(income_interval)
     incomes = df.groupby('income_interval')['successful_offer'].mean()
@@ -121,74 +123,102 @@ def index():
     graphs = [
         {
             'data': [
+                Pie(
+                    labels=labels,
+                    values=values,
+                    marker=dict(colors=['#006341', 'black'])
+                )
+            ],
+            'layout': {
+                'title': "Distribution of offers' success",
+                'titlefont': {
+                    'size': 18,
+                }
+            }
+        },
+
+        {
+            'data': [
                 Bar(
                     x=offer_types_df['offer_type'],
-                    y=offer_types_df['% of success']
+                    y=offer_types_df['% of success'],
+                    marker=dict(color='#006341')
                 )
             ],
 
             'layout': {
                 'title': 'Probability of success by offer type',
                 'yaxis': {
-                    'title': "% of success"
+                    'title': "% of success",
+                    'titlefont': {
+                        'size': 18,
+                    }
                 },
                 'xaxis': {
-                    'title': "Offer type"
-                }
+                    'title': "Offer type",
+                    'titlefont': {
+                        'size': 18,
+                    }
+                },
+                "titlefont": {
+                    "size": 28
+                },
             }
         },
         {
             'data': [
                 Bar(
                     x=grouped_ages_df['age'],
-                    y=grouped_ages_df['% of success']
+                    y=grouped_ages_df['% of success'],
+                    marker=dict(color='#006341')
                 )
             ],
 
             'layout': {
                 'title': 'Probability of success by age',
                 'yaxis': {
-                    'title': "% of success"
+                    'title': "% of success",
+                    'titlefont': {
+                        'size': 18,
+                    }
                 },
                 'xaxis': {
-                    'title': "Age"
-                }
-            }
-        },
-        {
-            'data': [
-                Bar(
-                    x=difficulties_df['difficulty'],
-                    y=difficulties_df['% of success']
-                )
-            ],
-
-            'layout': {
-                'title': 'Probability of success by offer difficulty',
-                'yaxis': {
-                    'title': "% of success"
+                    'title': "Age",
+                    'titlefont': {
+                        'size': 18,
+                    }
                 },
-                'xaxis': {
-                    'title': "Difficulty"
-                }
+                "titlefont": {
+                    "size": 28
+                },
             }
         },
         {
             'data': [
                 Bar(
                     x=incomes_df['income'],
-                    y=incomes_df['% of success']
+                    y=incomes_df['% of success'],
+                    marker=dict(color='#006341')
                 )
             ],
 
             'layout': {
                 'title': 'Probability of success by customer income',
                 'yaxis': {
-                    'title': "% of success"
+                    'title': "% of success",
+                    'titlefont': {
+                        'size': 18,
+                    }
                 },
                 'xaxis': {
-                    'title': "Income (in thousands USD)"
-                }
+                    'title': "Income (in thousands USD)",
+                    'titlefont': {
+                        'size': 18,
+                    }
+                },
+                "titlefont": {
+                    "size": 28
+                },
             }
         },
     ]
@@ -208,24 +238,65 @@ class ChoiceForm(FlaskForm):
     offer_id = SelectField('Offer ID', choices=list(zip(offer_ids, offer_ids)))
 
 
-@app.route('/machine-learning',  methods=['GET', 'POST'])
+@app.route('/machine-learning', methods=['GET', 'POST'])
 def machine_learning():
     """Machine learning page."""
     form = ChoiceForm()
-
     if request.method == 'POST':
         user_id_value = form.user_id.data
         offer_id_value = form.offer_id.data
-        attributes = get_offer_and_user_attributes(portfolio_engineered=portfolio,
-                                                   profile_engineered=profile,
-                                                   user_id=user_id_value,
-                                                   offer_id=offer_id_value)
+        offer_values_dict, user_values_dict = get_offer_and_user_attributes(portfolio_engineered=portfolio,
+                                                                            profile_engineered=profile,
+                                                                            user_id=user_id_value,
+                                                                            offer_id=offer_id_value)
+        data = {'user_info': user_values_dict, 'offer_info': offer_values_dict}
+        attributes = np.array(list(user_values_dict.values()) + list(offer_values_dict.values()))
         prediction = predict(ml_model=model, values=attributes)
-        #data = {'Offer ID': offer_id_value, 'User ID': user_id_value}
-        data = {'Prediction': prediction}
+        data.update({'Prediction': prediction})
         return render_template('machine-learning.html', data=data, form=form)
-    data = {}
+
+    user_id_value = form.user_id.choices[0][0]
+    offer_id_value = form.offer_id.choices[0][0]
+    offer_values_dict, user_values_dict = get_offer_and_user_attributes(portfolio_engineered=portfolio,
+                                                                        profile_engineered=profile,
+                                                                        user_id=user_id_value,
+                                                                        offer_id=offer_id_value)
+    data = {'user_info': user_values_dict, 'offer_info': offer_values_dict}
+
     return render_template('machine-learning.html', data=data, form=form)
+
+
+def convert_values_to_string(values):
+    for key, value in values.items():
+        values[key] = str(value)
+    return values
+
+
+@app.route('/update/<user_id>')
+def update(user_id):
+    """Update information about user ID."""
+    form = ChoiceForm()
+    _, user_values_dict = get_offer_and_user_attributes(portfolio_engineered=portfolio,
+                                                        profile_engineered=profile,
+                                                        user_id=user_id,
+                                                        offer_id=form.offer_id.choices[0][0])
+
+    data = {'user_info': convert_values_to_string(user_values_dict)}
+    return jsonify(data)
+
+
+@app.route('/update-offer/<offer_id>')
+def update_offer(offer_id):
+    """Update information about offer ID."""
+    form = ChoiceForm()
+    offer_values_dict, _ = get_offer_and_user_attributes(portfolio_engineered=portfolio,
+                                                         profile_engineered=profile,
+                                                         user_id=form.user_id.choices[0][0],
+                                                         offer_id=offer_id)
+
+    data = {'offer_info': convert_values_to_string(offer_values_dict)}
+    return jsonify(data)
+
 
 def main():
     app.run(host='0.0.0.0', port=3001, debug=True)
