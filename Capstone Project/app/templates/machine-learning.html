@@ -219,6 +219,7 @@
             var user_id = user_id_select.value;
             var offer_id = offer_id_select.value;
             var prediction_item = document.getElementById("prediction-item");
+            prediction_item.innerHTML = '';
 
             fetch('/predict/' + offer_id + '/' + user_id).then(function(response) {
                 response.json().then(function(data) {
