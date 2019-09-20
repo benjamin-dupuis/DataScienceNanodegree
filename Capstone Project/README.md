@@ -107,13 +107,115 @@ pip install -r requirements.txt
 
 ## Insights
 
-That project was challenging for several reasons. First of all, the cleaning and data engineering process had to be well thought and meticulously done. For each event in the dataset, we had to take into consideration different factors: the order of the preceding and following events, the result of that event, as well as the time it occured. Given the fact that a customer can make several purchases, not necessarly related to an previously, sent offer added difficulties to this data analysis. Also, the different offers had different definitions of 'success'. In particular, the 'Informational' offers, i.e advertisement, had no reward associated to it, nor an event tagged 'event completed' associated to it. 
+### Preprocessing
 
-Also, after deducing which offers to tag as successful, there was a high disbalance in the dataset. About 22 % of the offers were successful, the rest being not successful. The strategy that I opted was to do an "oversampling" of the data, meaning that I duplicated some of the datapoints so that the final dataset had balance in its target classes.
 
-For the machine learning part, I tested several algorithms. The best model was a RandomForestClassifier, with an accuracy (on the balanced dataset) of 81 %. I also fine-tuned the model using [scikit-learn GridSearch](https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.GridSearchCV.html). 
+That data preprocessing was challenging for several reasons. First of all, the cleaning and data engineering process had to be well thought and meticulously done. For each event in the dataset, we had to take into consideration different factors: the order of the preceding and following events, the result of that event, as well as the time it occured. Given the fact that a customer can make several purchases, not necessarly related to an previously, sent offer added difficulties to this data analysis. Also, the different offers had different definitions of 'success'. In particular, the 'Informational' offers, i.e advertisement, had no reward associated to it, nor an event tagged 'event completed' associated to it. 
 
-All of the data engineering process and machine learning experimentations can be found in the [jupyter notebook](https://github.com/benjamin-dupuis/DataScienceNanodegree/blob/master/Capstone%20Project/Starbucks_Capstone_notebook.ipynb).
+
+### Data Engineering
+
+
+### Post Processing
+
+After deducing which offers to tag as successful, there was a high disbalance in the dataset. About 22 % of the offers were successful, the rest being not successful. The strategy that I opted was to do an "oversampling" of the data, meaning that I duplicated some of the datapoints so that the final dataset had balance in its target classes.
+
+
+### Machine Learning
+
+For the machine learning part, I tested an compared the performance of several algorithms. Those experiements were made on the balanced dataset, ie that the two target classes, successful or not successful, were equally distributed. Here the results:
+
+- Logistic Regression
+    - Accuracy Metrics
+    
+        Training accuracy: 59%, Testing accuracy: 59%
+ 
+    - Recall metrics:
+    
+        Training recall: 58%,  Testing recall: 57%
+
+    - Precision Metrics
+    
+        Training precision: 70%,  Testing precision: 70%
+       
+- Decision Tree
+    - Accuracy Metrics
+    
+        Training accuracy: **94%**,  Testing accuracy: 80%
+       
+    - Recall metrics:
+    
+        Training recall: **91%**,  Testing recall: 72%
+       
+    - Precision Metrics
+    
+        Training precision: 98%, Testing precision: 90%
+        
+    
+- Random Forest
+    - Accuracy Metrics
+    
+        Training accuracy: **94%**, Testing accuracy: **82%**
+        
+    - Recall metrics:
+    
+        Training recall: 90%, Testing recall: **76%**
+        
+    - Precision Metrics
+    
+        Training precision: **99%**,  Testing precision: **92%**
+       
+   
+
+- Gradient Boosting
+    - Accuracy Metrics
+    
+        Training accuracy: 60%,  Testing accuracy: 60%
+       
+    - Recall metrics:
+    
+        Training recall: 59%, Testing recall: 58%
+        
+    - Precision Metrics
+    
+        Training precision: 70%, Testing precision: 70%
+        
+        
+
+- AdaBoost
+    - Accuracy Metrics
+    
+        Training accuracy: 59%, Testing accuracy: 59%
+        
+    - Recall metrics:
+    
+        Training recall: 58%,  Testing recall: 57%
+       
+    - Precision Metrics
+    
+        Training precision: 67%,   Testing precision: 67%
+      
+
+
+- XGBoost
+    - Accuracy Metrics
+    
+        Training accuracy: 60%, Testing accuracy: 60%
+        
+    - Recall metrics:
+    
+        Training recall: 59%,   Testing recall: 59%
+      
+    - Precision Metrics
+    
+        Training precision: 70%,   Testing precision: 70%
+      
+
+
+### Optimization
+
+The best model was a RandomForestClassifier, with an accuracy (on the balanced dataset) of 81 %. I also fine-tuned the model using [scikit-learn GridSearch](https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.GridSearchCV.html). 
+
 
 
 ## Improvements
