@@ -21,7 +21,7 @@ In this project, the strategy that we chose to address the challenge mentionned 
 This project includes a data analysis of that dataset, a machine learning model trained to predict if an offer is going to be successful when sent to a given customer, and a web application to gather and present the results.
 
 
-### Installation
+## Installation
 
 To download the repository, open a cmd prompt and execute 
 ```
@@ -43,7 +43,7 @@ Download the necessary libraries:
 pip install -r requirements.txt
 ```
 
-### Usage:
+## Usage:
 1. Run the following commands in the project's root directory to set up your database and model.
 
     - To run ETL pipeline that cleans data and saves the data in a CSV file:
@@ -60,7 +60,7 @@ pip install -r requirements.txt
 3. Open a browser, and go to `localhost:3001`
 
 
-### Files
+## Files
 
 - `app`
     - `run.py` : Contains the main python file that runs the Flask application.
@@ -82,9 +82,31 @@ pip install -r requirements.txt
 - `requirements.txt`: Text file that contains all the Python packages necessary to run the code and the Web application.
 
 
+## Libraries Used
+
+-[Flask: Web Development framework](https://palletsprojects.com/p/flask/)
+
+-[scikit-learn: Machine Learning](https://scikit-learn.org/stable/)  
+
+-[Pandas: Data Analysis](https://pandas.pydata.org/)  
+
+-[Numpy: Scientific Computing](http://www.numpy.org/)  
+
+-[Matplotlib: Data Visualization](https://matplotlib.org/)  
+
+-[seaborn: Data Visualization](https://seaborn.pydata.org/) 
+
+-[jupyter: Interactive Notebook](https://jupyter.org/)
+
+-[WTForms: Forms API for Flask Web Development](https://pypi.org/project/WTForms/)
+
+-[imbalanced-learn: Data Analysis library to deal with imbalanced dataset](https://imbalanced-learn.readthedocs.io/en/stable/)
+
+-[xgboost: Gradient Boosting library](https://xgboost.readthedocs.io/en/latest/)
 
 
-### Insights
+
+## Insights
 
 That project was challenging for several reasons. First of all, the cleaning and data engineering process had to be well thought and meticulously done. For each event in the dataset, we had to take into consideration different factors: the order of the preceding and following events, the result of that event, as well as the time it occured. Given the fact that a customer can make several purchases, not necessarly related to an previously, sent offer added difficulties to this data analysis. Also, the different offers had different definitions of 'success'. In particular, the 'Informational' offers, i.e advertisement, had no reward associated to it, nor an event tagged 'event completed' associated to it. 
 
@@ -95,7 +117,7 @@ For the machine learning part, I tested several algorithms. The best model was a
 All of the data engineering process and machine learning experimentations can be found in the [jupyter notebook](https://github.com/benjamin-dupuis/DataScienceNanodegree/blob/master/Capstone%20Project/Starbucks_Capstone_notebook.ipynb).
 
 
-### Improvements
+## Improvements
 
 Several adjustements could be done to improve the results. First of all, he way that I deduced which offers were successful could be refined. For each offer received, I looked at the very next offers, and verified if the order of the events following the offer receiving matched a predefined sequence. However, between the time the user receives the offer, and makes a purchase that completes the offer, several unrelated events can happen: the user makes another purcharse, receives another offer, views an offer sent several days ago... Therefore, an adjustment would be to think in more broad terms, i.e look at the timestamps of the different actions and make sure that the required sequence is contained, in order, inside a valid time interval, not necessary one directly after another.
 
