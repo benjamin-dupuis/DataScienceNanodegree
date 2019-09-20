@@ -306,13 +306,13 @@ The best model was a RandomForestClassifier, with an accuracy (on the balanced d
 
 The hyper-parameters that I chose to optimize are the following:
 
-    "n_estimators" :        The number of trees in the Random Forest.
+    "n_estimators" :        The number of trees in the Random Forest. Values used: [50, 60, 70, 100, 200]
     
-    "min_samples_split":    The minimum number of samples required to split an internal node.
+    "min_samples_split":    The minimum number of samples required to split an internal node. Values used: [3, 9, 15]
     
-    "min_samples_leaf":     The minimum number of samples required to be at a leaf node.
+    "min_samples_leaf":     The minimum number of samples required to be at a leaf node. Values used: [1, 3, 5, 7]
     
-    "max_depth":            The maximum depth of the tree. 
+    "max_depth":            The maximum depth of the tree. Values used: [1, 2, 3, 5, 7, 9, 15, 20]
     
     
 Also, it's important that this algorithm has a random part to it, as mentionned above. Therefore, we chose a fixed rando state for our training, so that the model would give the same results each time.
