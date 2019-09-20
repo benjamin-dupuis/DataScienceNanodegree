@@ -109,11 +109,108 @@ pip install -r requirements.txt
 
 ### Preprocessing
 
+That data preprocessing was challenging for several reasons. First of all, the cleaning and data engineering process had to be well thought and meticulously done. For each event in the dataset, we had to take into consideration different factors: the order of the preceding and following events, the result of that event, as well as the time it occured. Given the fact that a customer can make several purchases, not necessarly related to an previously, sent offer added difficulties to this data analysis. Also, the different offers had different definitions of 'success'. In particular, the 'Informational' offers, i.e advertisement, had no reward associated to it, nor an event tagged 'event completed' associated to it. My strategy to deduce which offers were successful was the following:
 
-That data preprocessing was challenging for several reasons. First of all, the cleaning and data engineering process had to be well thought and meticulously done. For each event in the dataset, we had to take into consideration different factors: the order of the preceding and following events, the result of that event, as well as the time it occured. Given the fact that a customer can make several purchases, not necessarly related to an previously, sent offer added difficulties to this data analysis. Also, the different offers had different definitions of 'success'. In particular, the 'Informational' offers, i.e advertisement, had no reward associated to it, nor an event tagged 'event completed' associated to it. 
+As mentionned, for offers of type "informational", it is just an advertisement, so there is no "reward", nor a "difficulty". Also, for this type of offer, their is no "offer completed" event. 
+
+Therefore, here are the steps necessary for the different offer types to be considered "successful": 
+
+"BOGO" and "discount: 
+
+   1. "offer received"
+   2. "offer viewed"
+   3. "offer completed"
+   4. "transaction"
+    
+    
+"informational":
+
+   1. "offer received"
+   2. "offer viewed"
+   3. "transaction"
 
 
 ### Data Engineering
+
+Here are the data engineering actions that I executed on the combined dataset. 
+
+- Profile
+
+    For the 'became_member_on' column, which indicated the date that the user started using the application, I performed 2 steps:
+        1. I extracted the day of the week the user became memeber. In some cases, the fact that the user became a member on a weekday or on weekend can tell us if that user will be a recurrent buyer or not.
+        2. I extracted the year the user became a member, and I "dummied" that variable.
+        
+    I also 'dummied' the gender column.
+    
+
+- Portoflio
+
+    On the part of the dataset containing information about the different offers, I made the following actions:
+    
+    - I dummied the offer type.
+    - I extracted the list of sources used to send the offers, created 4 different columns from those sources where the value is 1 or 0, indicating if the source was used or not for a given offer ID.
+    - I also multiplied the duration by 24 to transform the value from days to hours.
+    
+    
+- Transcript
+
+    On the dataset contaning the events, I made the following data engineering actions:
+    
+    - I only took the data related to users in the profile section of the dataset. Indeed, we did not have any information about the addtional users, so we could not really use those in our analysis process.
+    - I created a column named 'offer_id', containing values of the offer ID extracted from the event. However, the events of type 'transaction' did not have any offer ID, so we assigned a temporary value of "null" to those.
+    - As mentionned above, we use a specific order of events for the different offers types to deduce whether or not a given offer was successful. Also, it's important to mention that the transaction had to be done in a given timeframe to consider the offer as successful.
+    - I finally dropped several columns that did not give use any important information, like the offer_id or the time of the event (that value had already been used to deduce the offers success). I also dropped any duplicated rows from our dataset.
+    
+    
+I ended up with the following schema for the dataset:
+
+    age:                        Age of the user (in years)
+
+    income                      Income of the user (in USD)
+
+    weekday_membership          Weekday (value from 1 to 7) were the user became member
+
+    gender_F                    1 if the user is a female, 0 otherwise.
+
+    gender_M                    1 if the user is a male, 0 otherwise.
+
+    gender_O                    1 if the gender is 'other', 0 otherwise. 
+
+    became_member_on_2013       1 if the user became member in 2013, 0 otherwise.
+
+    became_member_on_2014       1 if the user became member in 2014, 0 otherwise.
+
+    became_member_on_2015       1 if the user became member in 2015, 0 otherwise.
+
+    became_member_on_2016       1 if the user became member in 2016, 0 otherwise.
+
+    became_member_on_2017       1 if the user became member in 2017, 0 otherwise.
+
+    became_member_on_2018       1 if the user became member in 2018, 0 otherwise.
+
+    difficulty                  Amount the user has to spend for the offer.
+
+    reward                      Reward given to the user if he completes the offer.
+
+    email                       1 if the offer was sent by email, 0 otherwise.
+
+    mobile                      1 if the offer was sent by mobile, 0 otherwise.
+
+    social                      1 if the offer was sent on social media, 0 otherwise.
+
+    web                         1 if the offer was sent on the web, 0 otherwise.
+
+    duration_hours              Duration in hours where the offer is active.
+
+    offer_type_bogo             1 if the offer is "BOGO", 0 otherwise.
+
+    offer_type_discount         1 if the offer is a discount, 0 otherwise.
+
+    offer_type_informational    1 if the offer is an advertisement, 0 otherwise.
+
+    successful_offer            1 if the offer is considered successful, 0 otherwise.
+    
+
 
 
 ### Post Processing
@@ -196,9 +293,14 @@ For the machine learning part, I tested an compared the performance of several a
 </table>
 
 
+As we can see above, the model that performs the best is by far the Random Forest Classifier. However, it does overfitting, because its training accuracy is around 94%, and its testing accuracy is around 81%. We will do hyperparameters tuning to find a better model. Also, in this particcular problem, we favorise recall over precision. Indeed, we think it's better to send the offers to all the clients who are susceptible to be influenced by it, even though it implies at the same time to send offers to clients that will not repond positively to those offers. In a long period of time, that strategy should be increase revenues more that it increases the expenses related to additional sent offers. Once again, the model that had the best recall metric was the Random Forest Classifier.
+
+
 ### Optimization
 
-The best model was a RandomForestClassifier, with an accuracy (on the balanced dataset) of 81 %. I also fine-tuned the model using [scikit-learn GridSearch](https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.GridSearchCV.html). 
+The best model was a RandomForestClassifier, with an accuracy (on the balanced dataset) of 94% on training and 81% on testing. 
+
+I also fine-tuned the model using [scikit-learn GridSearch](https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.GridSearchCV.html). 
 
 
 
