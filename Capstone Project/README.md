@@ -295,12 +295,27 @@ For the machine learning part, I tested an compared the performance of several a
 
 As we can see above, the model that performs the best is by far the Random Forest Classifier. However, it does overfitting, because its training accuracy is around 94%, and its testing accuracy is around 81%. We will do hyperparameters tuning to find a better model. Also, in this particcular problem, we favorise recall over precision. Indeed, we think it's better to send the offers to all the clients who are susceptible to be influenced by it, even though it implies at the same time to send offers to clients that will not repond positively to those offers. In a long period of time, that strategy should be increase revenues more that it increases the expenses related to additional sent offers. Once again, the model that had the best recall metric was the Random Forest Classifier.
 
+The Random Forest Classifier can be desribed as follows:
+
+An group of decision trees are brought together to work as an *ensemble*. In each iteration, each individual tree in the random forest makes a class prediction. The most popular prediction among the ensemble is used as the final prediction of the model. The random part of that model resides in the fact that a random subset of features is used to make the predictions. The reason behind that is that if the model would use all of the features for every tree, somee trees would become highly correlated, and therefore the model would tend to nevery adjust its predictions. 
+
 
 ### Optimization
 
-The best model was a RandomForestClassifier, with an accuracy (on the balanced dataset) of 94% on training and 81% on testing. 
+The best model was a RandomForestClassifier, with an accuracy (on the balanced dataset) of 94% on training and 81% on testing. That difference between trainining and testing accuracy indicates that the model does *overfitting*. To improve the performance of the model we used [scikit-learn GridSearch](https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.GridSearchCV.html). In particular, I tried different values of the "depth" of the tree, indicating how far the three can go the separate the different data points. That parameter in particular is important when trying to reduce overfitting. Indeed, the more splitting the algorithm does, the more it will tend to make over represent the data, or learn the data "by heart", meaning that the accuracy on the training will be very high, but when dealing with unknown data, due to that over specialization. 
 
-I also fine-tuned the model using [scikit-learn GridSearch](https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.GridSearchCV.html). 
+The hyper-parameters that I chose to optimize are the following:
+
+    "n_estimators" :        The number of trees in the Random Forest.
+    
+    "min_samples_split":    The minimum number of samples required to split an internal node.
+    
+    "min_samples_leaf":     The minimum number of samples required to be at a leaf node.
+    
+    "max_depth":            The maximum depth of the tree. 
+    
+    
+Also, it's important that this algorithm has a random part to it, as mentionned above. Therefore, we chose a fixed rando state for our training, so that the model would give the same results each time.
 
 
 
