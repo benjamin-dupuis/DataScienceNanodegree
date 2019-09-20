@@ -14,6 +14,10 @@ Another important point was that the offers were valid for a given number of day
 In the dataset, all of the transactions made by the different clients were recorded. Therefore, the task was to determine from those transactions which offers were successful, and from there, try to predict whether or not a client would respond positively to an offer.
 
 For a company like Starbucks, that has millions of customers, that data insight can save them thousands of dollars every year. Indeed, knowing which users to send offers (and which user to not send offer to) can not only create more revenues, but also reduce costs.
+
+
+In this project, the strategy that we chose to address the challenge mentionned was to gather all the transactions data, and linking that to the offers characteristics, as well as the users attributes. By doing so, we were able to deduce which offers the different users responded to, and subsequently build a machine learning model that can predict whether or not a user will respond positively to an offer. Therefore, in the future, that machine learning could be used before actually sending the offers, and make the business decision to sen those offers only to the clients that were predicted to respond positively. The strategy to build a machine learning model was used for its direct applicability and its rusability for future offers and future clients.
+
 This project includes a data analysis of that dataset, a machine learning model trained to predict if an offer is going to be successful when sent to a given customer, and a web application to gather and present the results.
 
 
@@ -54,6 +58,30 @@ pip install -r requirements.txt
     ```
 
 3. Open a browser, and go to `localhost:3001`
+
+
+### Files
+
+- `app`
+    - `run.py` : Contains the main python file that runs the Flask application.
+    - `templates` : Folder that contains the HTML files used in the Web app.
+    
+- `data`
+    - `portfolio.json`: JSON file containing the information about the offers.
+    - `profile.json`: JSON file containing the information about the users.
+    - `transcript.json`: JSON file containing all events related to the users and the offers.
+    - `process_data.py`: Python file that loads, cleans, engineers, and saves the data into CSV files.
+
+- `models`
+    - `train_classifier.py`: Python file that loads the engineered data, trains a machine leaning model, and saves the trained model.
+    
+- `README.md`: File that describes the project and how to use it.
+
+- `Starbucks_Capstone_Notebook.ipynb`: Jupyter Notebook that contains the data engineeering and data analysis, as well as the code used to train and test the selected machine learning models
+
+- `requirements.txt`: Text file that contains all the Python packages necessary to run the code and the Web application.
+
+
 
 
 ### Insights
