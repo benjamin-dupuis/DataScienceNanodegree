@@ -326,3 +326,9 @@ Several adjustements could be done to improve the results. First of all, he way 
 Also, more feature engineering could have been done. For example, for every user, look at the mean amount they spent for their different purchases, or how many offers they received.
 
 
+## Refrerences
+- [Udacity DSND Term 1](https://github.com/udacity/DSND_Term1)
+- [Udacity DSND Term 2](https://github.com/udacity/DSND_Term2)
+- [Understanding Random Forest](https://towardsdatascience.com/understanding-random-forest-58381e0602d2)
+- [Flask Boilerplate](https://github.com/MaxHalford/flask-boilerplate)
+- [Bootstrap in Flask](https://john.soban.ski/pass-bootstrap-html-attributes-to-flask-wtforms.html)
