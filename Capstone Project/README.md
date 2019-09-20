@@ -123,93 +123,77 @@ After deducing which offers to tag as successful, there was a high disbalance in
 
 ### Machine Learning
 
-For the machine learning part, I tested an compared the performance of several algorithms. Those experiements were made on the balanced dataset, ie that the two target classes, successful or not successful, were equally distributed. Here the results:
+For the machine learning part, I tested an compared the performance of several algorithms. Those experiements were made on the balanced dataset, ie that the two target classes, successful or not successful, were equally distributed. Here are the results:
 
-- Logistic Regression
-    - Accuracy Metrics
-    
-        Training accuracy: 59%, Testing accuracy: 59%
- 
-    - Recall metrics:
-    
-        Training recall: 58%,  Testing recall: 57%
-
-    - Precision Metrics
-    
-        Training precision: 70%,  Testing precision: 70%
-       
-- Decision Tree
-    - Accuracy Metrics
-    
-        Training accuracy: **94%**,  Testing accuracy: 80%
-       
-    - Recall metrics:
-    
-        Training recall: **91%**,  Testing recall: 72%
-       
-    - Precision Metrics
-    
-        Training precision: 98%, Testing precision: 90%
-        
-    
-- Random Forest
-    - Accuracy Metrics
-    
-        Training accuracy: **94%**, Testing accuracy: **82%**
-        
-    - Recall metrics:
-    
-        Training recall: 90%, Testing recall: **76%**
-        
-    - Precision Metrics
-    
-        Training precision: **99%**,  Testing precision: **92%**
-       
-   
-
-- Gradient Boosting
-    - Accuracy Metrics
-    
-        Training accuracy: 60%,  Testing accuracy: 60%
-       
-    - Recall metrics:
-    
-        Training recall: 59%, Testing recall: 58%
-        
-    - Precision Metrics
-    
-        Training precision: 70%, Testing precision: 70%
-        
-        
-
-- AdaBoost
-    - Accuracy Metrics
-    
-        Training accuracy: 59%, Testing accuracy: 59%
-        
-    - Recall metrics:
-    
-        Training recall: 58%,  Testing recall: 57%
-       
-    - Precision Metrics
-    
-        Training precision: 67%,   Testing precision: 67%
-      
-
-
-- XGBoost
-    - Accuracy Metrics
-    
-        Training accuracy: 60%, Testing accuracy: 60%
-        
-    - Recall metrics:
-    
-        Training recall: 59%,   Testing recall: 59%
-      
-    - Precision Metrics
-    
-        Training precision: 70%,   Testing precision: 70%
-      
+<table>
+  <tr>
+    <th rowspan="2"><br>Algorithm</th>
+    <th colspan="3">Training </th>
+    <th colspan="3">Testing</th>
+  </tr>
+  <tr>
+    <td>Accuracy</td>
+    <td>Precision</td>
+    <td>Recall</td>
+    <td>Accuracy</td>
+    <td>Precision</td>
+    <td>Recall</td>
+  </tr>
+  <tr>
+    <td>Logistic Regression</td>
+    <td>59%</td>
+    <td>70%</td>
+    <td>58%</td>
+    <td>59%</td>
+    <td>70%</td>
+    <td>57%</td>
+  </tr>
+  <tr>
+    <td>Decision Tree</td>
+    <td><b>94%</b></td>
+    <td>98%</td>
+    <td><b>91%</b></td>
+    <td>80%</td>
+    <td>90%</td>
+    <td>72%</td>
+  </tr>
+  <tr>
+    <td>Random Forest</td>
+    <td><b>94%</b></td>
+    <td><b>99%</b></td>
+    <td>90%</td>
+    <td><b>82%</b></td>
+    <td><b>92%</b></td>
+    <td><b>76%</b></td>
+  </tr>
+  <tr>
+    <td>Gradient Boosting</td>
+    <td>60%</td>
+    <td>70%</td>
+    <td>59%</td>
+    <td>60%</td>
+    <td>70%</td>
+    <td>58%</td>
+  </tr>
+  <tr>
+    <td>AdaBoost</td>
+    <td>59%</td>
+    <td>67%</td>
+    <td>58%</td>
+    <td>59%</td>
+    <td>67%</td>
+    <td>57%</td>
+  </tr>
+  <tr>
+    <td>XGBoost</td>
+    <td>60%</td>
+    <td>70%</td>
+    <td>59%</td>
+    <td>60%</td>
+    <td>70%</td>
+    <td>59%</td>
+  </tr>
+</table>
 
 
 ### Optimization
