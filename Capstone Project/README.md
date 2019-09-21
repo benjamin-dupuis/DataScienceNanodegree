@@ -306,16 +306,57 @@ The best model was a RandomForestClassifier, with an accuracy (on the balanced d
 
 The hyper-parameters that I chose to optimize are the following:
 
-    "n_estimators" :        The number of trees in the Random Forest. Values used: [50, 60, 70, 100, 200]
+    "n_estimators" :        The number of trees in the Random Forest. Values used: [50, 60, 70, 100, 200, 400]
     
-    "min_samples_split":    The minimum number of samples required to split an internal node. Values used: [3, 9, 15]
+    "min_samples_split":    The minimum number of samples required to split an internal node. Values used: [2, 3, 5, 7, 9, 15]
     
     "min_samples_leaf":     The minimum number of samples required to be at a leaf node. Values used: [1, 3, 5, 7]
     
-    "max_depth":            The maximum depth of the tree. Values used: [1, 2, 3, 5, 7, 9, 15, 20]
+    "max_depth":            The maximum depth of the tree. Values used: [1, 2, 3, 5, 7, 9, 15, 20, 25]
     
     
-Also, it's important that this algorithm has a random part to it, as mentionned above. Therefore, we chose a fixed rando state for our training, so that the model would give the same results each time.
+Also, it's important that this algorithm has a random part to it, as mentionned above. Therefore, we chose a fixed random state for our training, so that the model would give the same results each time.
+
+We also chose a Cross Validation equal to 5. Cross validation is the process of separating the dataset into subsets, (for training and testing dataset), and performing the validation on each of those. That process is repeated "k" times (in our case k=5). The final performance is determined by the average performance obtained on each subset. Also, the metric that we used in the fine-tuning process was the area under ROC curve, so that the balance between the accuracy and the recall is optimized.
+
+
+<table>
+  <tr>
+    <th rowspan="2"><br>Algorithm</th>
+    <th colspan="3">Training </th>
+    <th colspan="3">Testing</th>
+  </tr>
+  <tr>
+    <td>Accuracy</td>
+    <td>Precision</td>
+    <td>Recall</td>
+    <td>Accuracy</td>
+    <td>Precision</td>
+    <td>Recall</td>
+  </tr>
+  <tr>
+  <tr>
+    <td>Random Forest</td>
+    <td>94%</td>
+    <td>99%</td>
+    <td>90%</td>
+    <td>82%</td>
+    <td>92%</td>
+    <td>76%</td>
+  </tr>
+    
+   <tr>
+    <td>Random Forest Optimized</td>
+    <td>95%</td>
+    <td>99%</td>
+    <td>90%</td>
+    <td>81%</td>
+    <td>92%</td>
+    <td>76%</td>
+  </tr>
+
+ 
+</table>
 
 
 
